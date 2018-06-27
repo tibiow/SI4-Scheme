@@ -1,0 +1,82 @@
+;; Spécificités DrScheme (plus nécessaire dans les versions récentes)
+(require mzlib/defmacro)
+
+;; Un macro-expand qui correspond à celui du cours
+(define-macro (macro-expand m)
+  `(syntax-object->datum (expand-once ,m)))
+
+;; Un macro-expand "récursif"
+(define-macro (macro-expand* m)
+  `(syntax-object->datum (expand-to-top-form ,m)))
+
+;; Une fonction pretty-print (avec largeur optionnelle)
+(define (pp form . width)
+  (pretty-print-columns (if (null? width) 30 (car width)))
+  (pretty-print form))
+
+(define-macro (when cond . body)
+  `(if ,cond (begin ,@body)))
+
+(define créer-accumulateur
+  (let ((c 0))
+    (λ(n)
+      (set! c (+ c n)) c)))
+
+(define a (λ(n) (créer-accumulateur n)))
+
+
+
+
+
+
+
+(define-macro (define-func f args)
+  `(define (,(car f) ,@(map car (cdr f)))
+     ,@(map
+     (λ(x)
+      `(if (not (,@(cdr x) ,(car x)))
+      (error 'x " wrong type"))) (cdr f))
+
+     (,@args)))
+
+(define-func (puissance (x integer?) (y integer?))
+   (expt x y))
+
+(puissance 2 2)
+
+
+(define fact
+  (lambda(x)
+    (if (= x 1)
+        1
+        (* x (fact(- x 1))))))
+
+
+(define-macro (trace f)
+  `(set! ,f (tracer-fonction ',f ,f)))
+
+(define (tracer-fonction nom fct)
+  (λ(n)
+    (print "start fact ")
+    (display n)
+    (println " ")
+           (let ((r (fct n)))
+             (print "stop fact ")
+             (display n)
+             (println " ")
+             r)))
+
+(trace fact)
+
+
+
+(define (créer-carte x0)
+  (let ((x x0))
+    ((define décrémenter   (set! x (- x 1)))
+    (define afficher-unités    (display x)))
+
+    (λ(msg)
+      (case msg
+        ((décrémenter)   (décrémenter))
+        ((afficher-unités)    (afficher-unités))
+        (else     (error "Bad message" msg))))))

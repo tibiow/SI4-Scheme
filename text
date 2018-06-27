@@ -1,0 +1,35 @@
+;; Spécificités DrScheme (plus nécessaire dans les versions récentes)
+(require mzlib/defmacro)
+
+;; Un macro-expand qui correspond à celui du cours
+(define-macro (macro-expand m)
+  `(syntax-object->datum (expand-once ,m)))
+
+;; Un macro-expand "récursif"
+(define-macro (macro-expand* m)
+  `(syntax-object->datum (expand-to-top-form ,m)))
+
+;; Une fonction pretty-print (avec largeur optionnelle)
+(define (pp form . width)
+  (pretty-print-columns (if (null? width) 30 (car width)))
+  (pretty-print form))
+
+(define créer-accumulateur
+  (λ(accu)
+    (λ (x)
+      (set! accu (+ accu x))
+      accu)))
+
+(define a (créer-accumulateur 100))
+(define b (créer-accumulateur 100))
+
+(define-macro (while cond . body)
+  `(let ((i 0)
+         ((count (cadr ,cond))))
+     (letrec ((loop (λ()
+                  (if (< (+ i 1) count) 
+                  ,@body (set! i (- i 1)) loop)))
+                  ))
+     (loop)))
+
+

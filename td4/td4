@@ -1,0 +1,9 @@
+(define (flat . l) 
+  (define my-flat
+    (λ(l)
+      (cond
+        ((null? l) l)
+        ((pair? l) (append (flat (car l)) (flat (cdr l))))
+        (else (list l)))))
+  (apply append (map my-flat l)))
+

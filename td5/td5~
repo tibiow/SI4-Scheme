@@ -1,0 +1,46 @@
+(define créer-accumulateur
+  (let ((c 0))
+    (λ(n)
+      (set! c (+ c n)) c)))
+
+(define a (λ(n) (créer-accumulateur n)))
+
+
+
+
+
+
+
+
+
+
+
+(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))
+
+
+(define memo
+  (let ((i '()))
+    (λ(f)
+      (λ(n)
+        (if
+        (set! c (f n)) c)))))
+
+
+   
+(define mfib (memo fib))
+
+
+(define l '(a b c))
+
+(let ((tmp (car l)))
+  (set! l (cdr l))
+  tmp)
+
+(define-macro (prog1 premier . suite)
+  `(let ((tmp ,premier ) ,@suite tmp)))
+               
+
+               
+(prog1 (car l) (set! l (cdr l)))
+
+

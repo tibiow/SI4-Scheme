@@ -1,0 +1,65 @@
+(define remove-if
+  (λ(f l)
+    (cond
+      ((null? l) ())
+      ((f (car l))  (remove-if f (cdr l)))
+      (else (cons (car l) (remove-if f (cdr l)))))))
+
+(define count-if
+  (λ(f l)
+    (cond
+      ((null? l) 0)
+      ((f (car l)) (+ 1 (count-if f (cdr l))))
+      (else (count-if f (cdr l))))))
+              
+(define find-if
+  (λ(f l)
+    (cond
+      ((null? l) ())
+      ((f (car l)) (car l))
+      (else (find-if f (cdr l))))))
+
+;(remove-if number? '(a 1 (1) 2 (x y) ()) )
+;(remove-if (lambda (x)(< x 5)) '(6 2 9 3 7 1) )
+;(remove-if null? '(a () 1 () (())))
+;(count-if symbol? '(a (a) () c (x y) b) )
+;(find-if list? '(a 1 (x y) () (a b)) )
+
+(define remove-if-not
+  (λ(f l) 
+    (remove-if (λ(x) (not (f x))) l)))
+
+(define (show . lst)
+  (for-each (λ (x)
+              (display x)
+              (display " "))
+            lst)
+  (newline))
+
+(define hanoi
+  (λ(x)
+    (sous-hanoi x 'a 'b 'c)))
+
+(define sous-hanoi
+  (λ(x depart arrive buffer)
+    (cond
+      ((= x 1) )
+      ((> x 1)
+       (show "deplacer un disque de" depart "vers" arrive)
+       (show "deplacer un disque de" depart "vers" buffer)
+       (show "deplacer un disque de" arrive "vers" buffer)       
+       (sous-hanoi2 (- x 1) depart arrive)
+       (sous-hanoi (- x 1) buffer depart arrive)
+
+
+       
+       ))))
+
+(define sous-hanoi2
+  (λ(x depart arrive)
+    (cond
+      ((= x 1) )
+      (else (show "deplacer un disque de" depart "vers" arrive)(sous-hanoi2 (- x 1) depart arrive)))))
+    
+
+(hanoi 4)

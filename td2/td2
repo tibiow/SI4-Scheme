@@ -1,0 +1,162 @@
+;(car '((a b) c (d e) f))
+;(cdr '((1 2 3)))
+;(car '(x y z))
+;(cdr '((a b) c (d e) f))
+;(cdr '((1 2 3)))
+;(cdr '(x y z))
+;(car (cdr '((a b) c (d e) f)))
+;(cdr (car '((a b) c (d e) f)))
+;(= 'zero 0)
+;(equal? 'zero 0)
+;(eq? 'zero 0)
+
+(define rotation-droite
+  (lambda(l)
+    (append (cdr l) (cons (car l) '()))))
+
+;(rotation-droite '(a b c d))
+
+(define rotation-gauche
+  (lambda(l)
+    (cons (car (reverse l)) (reverse (cdr(reverse l))))))
+;(rotation-gauche '(a b c d))
+
+(define milieu
+  (lambda(l)
+    (cond
+      ((null? l) ())
+      ((pair? l)
+       (if (pair? (cdr l))
+          (cdr (reverse (cdr l)))
+          ())))))
+
+
+;(milieu '(a b c d))
+;(milieu '(a))
+;(milieu '())
+
+(define swap
+  (λ(l)
+    (if (< 1 (length l))
+    (cons (car (reverse l)) (append(reverse(cdr (reverse (cdr l)))) (cons (car l) '())))
+    ())))
+
+;(swap '(1 2 3 4))
+
+
+(define own-list-ref
+  (λ(l n)
+    (if (= n 0)
+        (car l)
+        (list-ref (cdr l) (- n 1)))))
+
+(define own-member
+  (λ(n l)
+    (cond
+      ((null? l) #f)
+      ((pair? l) #f)
+      ((= n (car l)) l)
+      (else (own-member n (cdr l))))))
+
+;(own-member 2 '(1 (2 3 4) 5))
+;(own-member 2 '(1 5))
+
+(define entiers
+  (λ(l)
+    (cond
+      ((null? l) 0)
+      ((integer? l) 1)
+      ((pair? l)
+       (cond
+         ((null? (car l)) (entiers(cdr l)))
+         ((pair? (car l)) (+ (entiers(car l)) (entiers (cdr l))))
+         ((integer? (car l)) (+ 1 (entiers (cdr l))))
+         (else (entiers (cdr l)))
+         )
+       ))))
+
+
+;(entiers '(1 (2 (34) 5) 6 () (78)) )
+;(entiers '12)
+;(entiers '())
+;(entiers '((((1 a b))) (((x 2)))) )
+
+(define full-reverse
+  (λ(l)
+    (cond
+      ((null? l) l)
+      ((integer? l) l)
+      ((pair? l)
+       (cond
+         ((pair? (car (reverse l))) (cons  (full-reverse(car (reverse l))) (full-reverse (reverse (cdr (reverse l))))))
+         ((integer? (car (reverse l))) (cons (car (reverse l)) (full-reverse (reverse(cdr (reverse l))))))
+         ((null? (car (reverse l)) ())))
+      )
+      (else l))))
+       
+
+;(full-reverse '(1 (2 (3 4) 5) (6 7) (8)) )
+;(full-reverse '(1 (2 (3 (4 (5))))) )
+
+(define is-in?
+  (λ(x l)
+    (cond
+      ((null? l) #f)
+      ((pair? l)
+       (cond
+         ((pair? x) (if(equal? l x) #t) (is-in? x (cdr l)))
+         ((pair? (car l)) (is-in? x (car l)))
+         (else (if (equal? (car l) x) #t (is-in? x (cdr l))))
+          
+      )))))
+
+;(define is-in?
+;  (λ(x l)
+;    (cond
+;      ((null? l) #f)
+;      ((pair? l)
+;       (cond
+;         ((pair? (car l)) (is-in? x (car l)))
+;          (else (if (equal? (car l) x) #t (is-in? x (cdr l))))
+;      )))))
+
+;(is-in? 'y '(x (y z) w) )
+
+(define flat
+  (λ(l)
+    (cond
+      ((null? l) l)
+      ((pair? l)
+       (cond
+         ((null? (car l)) (flat (cdr l)))
+         ((pair? (car l)) (append (flat (car l))  (flat (cdr l))))
+         (else (cons  (car l) (flat (cdr l)))))
+     ))))
+
+;(flat '(a (b (c) ((d))) e () (f)) )
+
+(define remove1
+  (λ(x l)
+    (cond
+      ((equal? x (car l)) (cdr l))
+      (else (cons (car l) (remove1 x (cdr l)))))))
+
+      
+;(remove1 1 '(0 1 2 3 0 1 2 3))
+
+(define remove2
+  (λ(x l)
+    (cond
+      ((null? l) l)
+      ((equal? x (car l)) (remove2 x (cdr l)))
+      (else (cons (car l) (remove2 x (cdr l)))))))
+
+;(remove2 1 '(0 1 2 3 0 1 2 3))
+
+(define remove-duplicate
+  (λ(l)
+    (cond
+      ((null? l) l)
+      ((pair? l) (cons (car l) (remove-duplicate  (remove2 (car l) (cdr l))))))))
+
+;(remove-duplicate '(a (a b) b (a b) a (a b) b) )
